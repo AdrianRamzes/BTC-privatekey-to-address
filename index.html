@@ -1,0 +1,385 @@
+<!doctype html>
+<html>
+
+<head>
+<meta charset="utf-8">
+<title>Bitcoin address generator</title>
+
+<style>
+
+body
+{
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+}
+
+body.dark
+{
+    /* background: #121212;
+    color: #e0e0e0; */
+    background: white;
+    color: black;
+}
+
+body.light
+{
+    background: white;
+    color: black;
+}
+
+.linkStyle
+{
+    display: inline;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.dark a, .dark .linkStyle
+{
+    color: #59c9ff;
+}
+
+.light a, .light .linkStyle
+{
+    color: #005aff;
+}
+
+button
+{
+    background-color: #146dff;
+    border: none;
+    border-radius: 5px;
+    color: #ffffff;
+    padding: 12px 25px 12px 25px;
+    margin: 5px 0px 5px 0px;
+    font-family: "Verdana";
+    font-size: 20px;
+    cursor: pointer;
+    width: 100%;
+    transition: 0.15s;
+}
+
+button:disabled
+{
+    background-color: #77abff;
+    cursor: not-allowed;
+}
+
+button:enabled:hover
+{
+    background-color: #54adff;
+}
+
+.dark input
+{
+    background: #323639;
+    color: white;
+    border: 1px solid #a0a3a1;
+}
+
+.light input
+{
+    background: white;
+    color: black;
+    border: 1px solid #a0a3a1;
+}
+
+.dark textarea
+{
+    background: #323639;
+    color: white;
+    border: 1px solid #a0a3a1;
+}
+
+.light textarea
+{
+    background: white;
+    color: black;
+    border: 1px solid #a0a3a1;
+}
+
+.dark select
+{
+    background: #323639;
+    color: white;
+}
+
+.light select
+{
+    background: white;
+    color: black;
+}
+
+li
+{
+    font-size: 18px;
+    padding: 5px;
+}
+
+.dark li
+{
+    color: white;
+}
+
+.light li
+{
+    color: black;
+}
+
+.title
+{
+    margin-top: 10px;
+    margin-bottom: 20px;
+    font-size: 2em;
+    font-weight: bold;
+}
+
+.title-small
+{
+    font-weight: bold;
+    font-size: 20px;
+    padding-bottom: 10px;
+}
+
+.address-view
+{
+    font-size: 20px;
+    margin: auto;
+    display: inline;
+    padding: 20px;
+    line-height: 50px;
+}
+
+.paperwallet-custom-params
+{
+    width: 80px;
+}
+
+.parent_div, #paperwallet_preview_div
+{
+    color: black;
+}
+
+#bip38_info
+{
+    position: absolute;
+    display: none;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    background-color: rgba(0,0,0,0);
+    z-index: 2;
+}
+
+#bip38_info_content
+{
+    position: absolute;
+    display: table;
+    width: 50%;
+    top: 50px;
+    left: 50px;
+    right: 0px;
+    bottom: 0px;
+    background-color: rgba(0,0,0,0.95);
+    color: #ffffff;
+    font-size: 24px;
+    padding: 20px;
+    line-height: 40px;
+}
+
+#randomness_overlay
+{
+    position: fixed;
+    display: table;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    background-color: rgba(0,0,0,0.85);
+    z-index: 2;
+}
+
+.light .highlighted
+{
+    background-color: #c0c0c0;
+}
+
+.dark .highlighted
+{
+    background-color: #404040;
+}
+
+.light #seed_details_results_addresses_table_header, .light #seed_details_results_addresses_table_header *,
+.light .seed_details_results_address_row, .light .seed_details_results_address_row *
+{
+    border-color: #bbbbbb;
+}
+
+.dark #seed_details_results_addresses_table_header, .dark #seed_details_results_addresses_table_header *,
+.dark .seed_details_results_address_row, .dark .seed_details_results_address_row *
+{
+    border-color: #707070;
+}
+
+.seed_details_results_address_row
+{
+    border-width: 2px;
+    border-style: solid;
+    border-top: 0px;
+}
+
+.seed_details_results_address_row > :nth-child(1)
+{
+    border-right-width: 2px;
+    border-right-style: solid;
+    width: 200px;
+    display: inline-block;
+    padding: 4px 8px;
+}
+
+.seed_details_results_address_row > :nth-child(2)
+{
+    border-right-width: 2px;
+    border-right-style: solid;
+    width: 420px;
+    display: inline-block;
+    padding: 4px 8px;
+}
+
+.seed_details_results_address_row > :nth-child(3)
+{
+    display: inline-block;
+    padding: 4px 8px;
+}
+
+#seed_generate_result.wide_spacing
+{
+    word-spacing: 15px;
+}
+
+.light #lightModeButton
+{
+    display: none;
+}
+
+.dark #darkModeButton
+{
+    display: none;
+}
+
+@media print
+{
+    body *
+    {
+        visibility: hidden;
+    }
+    
+    .print_container
+    {
+        visibility: visible;
+        display: block;
+        max-width: 100%;
+    }
+    
+    .print_visible
+    {
+        visibility: visible;
+        position: absolute;
+        width: 99%;
+        margin: 0px !important;
+        padding: 0px !important;
+        top: 0px;
+        left: 0px;
+        bottom: 0px;
+        right: 0px;
+        page-break-inside: avoid;
+    }
+    
+    .print_visible *
+    {
+        visibility: visible;
+        page-break-inside: avoid;
+    }
+    
+    *
+    {
+        background: white !important;
+        color: black !important;
+    }
+}
+
+/* https://fonts.google.com/specimen/Roboto+Mono */
+@font-face
+{
+    font-family: 'roboto-mono';
+    src: url(RobotoMono-Regular.woff) format('woff');
+    font-weight: normal;
+}
+
+@font-face
+{
+    font-family: 'roboto-mono';
+    src: url(RobotoMono-Bold.woff) format('woff');
+    font-weight: bold;
+}
+
+</style>
+</head>
+
+<body> 
+    <div id="main_details" style="display: table; width: 80%; padding-left: 10px;">
+        <div style="display: table-row;">
+            <div class="title">Address details</div>
+            <div style="margin-bottom: 10px;">Enter a private key to view its details, or enter a bip38 encrypted private key to decrypt it</div>
+            <input id="view_address_privkey_textbox" type="text" style="font-size: 25px; width: 100%; padding: 8px; margin-bottom: 10px;">
+            <button onclick="view_address_details()">View details</button>
+            <div id="bip38_decrypt_div" style="display: none; width: 100%;">
+                <div style="margin-top: 40px; margin-bottom: 10px; font-size: 20px;">Enter the password for this address:</div>
+                <input id="view_address_bip38_password_textbox" type="text" style="font-size: 25px; width: 400px; padding: 8px; margin-bottom: 10px;">
+                <br />
+                <button onclick="bip38decrypt_button()" style="width: 420px;">Decrypt</button>
+            </div>
+        </div>
+        <div id="view_address_div" class="print_visible" style="display: table;">
+            <div id="view_address_information" style="font-size: 25px; margin-top: 25px; margin-bottom: 20px;"></div>
+            <div id="view_address_container" style="display: none;">
+                <div style="display: table; border-bottom: 2px solid #bbbbbb; width: 100%;">
+                    <div id="view_address_segwitaddress" class="address-view"></div>
+                    <div id="view_address_segwitaddress_qr" style="padding: 0px 0px 10px 20px;"></div>
+                </div>
+                <div style="display: table; border-bottom: 2px solid #bbbbbb; width: 100%;">
+                    <div id="view_address_bech32address" class="address-view"></div>
+                    <div id="view_address_bech32address_qr" style="padding: 0px 0px 10px 20px;"></div>
+                </div>
+                <div style="display: table; width: 100%;">
+                    <div id="view_address_legacyaddress" class="address-view"></div>
+                    <div id="view_address_legacyaddress_qr" style="padding: 0px 0px 10px 20px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="js/setImmediate.js"></script>
+
+    <script type="text/javascript" src="js/BN.js"></script>
+
+    <script type="text/javascript" src="js/native_bigint.js"></script>
+    
+    <script type="text/javascript" src="js/crypto-js.js"></script>
+
+    <script type="text/javascript" src="js/crypto-helper.js"></script>
+    
+    <script type="text/javascript" src="js/QR.js"></script>
+    
+    <script type="text/javascript" src="js/scrypt.js"></script>
+    
+    <script type="text/javascript" src="js/imagesources.js"></script>
+
+    <script type="text/javascript" src="js/main.js"></script>
+    
+</body>
+</html>
